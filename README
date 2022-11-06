@@ -6,11 +6,11 @@ Approach: Take the stream of data and remove the last ~10% of the data. Build a 
 
 Suggested data-sets:
 
-    Intel Berkeley Research Lab
-    Take for example the data from the sensors of the Intel Berkeley Research Labs, see Stream Data Mining Repository. The data is in a format used by many machine learning frameworks, e.g. Weka.
-    Powersupply Stream
-    Use the power supply stream from the same data source: Stream Data Mining Repository. Here the challenge is to integrate seasonality into the analysis.
-    UCI Repository
-    Repository of multiple data-sets, including timeseries. 
+    - Intel Berkeley Research Lab
+      Take for example the data from the sensors of the Intel Berkeley Research Labs, see Stream Data Mining Repository. The data is in a format used by many machine learning frameworks, e.g. Weka.
+    - Powersupply Stream
+      Use the power supply stream from the same data source: Stream Data Mining Repository. Here the challenge is to integrate seasonality into the analysis.
+    - UCI Repository
+      Repository of multiple data-sets, including timeseries. 
 
 Advanced: Investigate your prediction algorithm and try to determine under which (controlled) circumstances it makes correct predictions. 
