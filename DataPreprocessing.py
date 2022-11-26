@@ -17,7 +17,11 @@ def main():
 
     # mistake in hours numbering hour 6 = 1248 instances
     #                                 9 = 1246 instances
-    # TODO find and correct such that every hour has 1247 instances
+    wrongHoursIndex = [24969]
+    #for i in np.arange(len(df)-1):
+    #    if df['hourOfDay'][i]+1 != df['hourOfDay'][i + 1] and df['hourOfDay'][i] != 23:
+    #        print("wtf")
+    df.at[wrongHoursIndex, 'hourOfDay'] = 9
 
     # hourly change in consumption
     diffMain = np.append(np.array(df['mainGrid']), 0) - np.append(0,np.array(df['mainGrid']))
@@ -33,10 +37,11 @@ def main():
     df_hourDiffMain = pd.DataFrame()
     for hour in np.arange(24):
         hourDiffList = df.loc[df['hourOfDay'] == hour]['diffMain'].values
-        print("hour: " + str(hour))
-        print("hour diff list len: " + str(np.size(hourDiffList)))
+
         df_hourDiffMain[str(hour)] = hourDiffList
 
+    figure(figsize=(22, 5), dpi=80, linewidth=5)
+    plt.title("boxplts of every hour through time")
     df_hourDiffMain.boxplot()
     plt.show()
 
