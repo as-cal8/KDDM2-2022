@@ -8,9 +8,8 @@ from sklearn.model_selection import train_test_split
 
 # header = {"mainGrid", "otherGrids", "hourOfDay"}
 # three year power supply records from 1995 to 1998
-def main():
+def dataPreprocesssing():
     df = pd.read_csv(DataLoading.path)
-
 
     # create timestamps
     start = datetime.datetime(1995, 1, 1, 0)
@@ -30,52 +29,57 @@ def main():
     diffMain = np.append(np.array(df_train['mainGrid']), 0) - np.append(0,np.array(df_train['mainGrid']))
     diffMain = diffMain[0:-1]
     diffMain[0] = 0
-    diffOther = np.append(np.array(df_train['otherGrids']), 0) - np.append(0,np.array(df_train['otherGrids']))
-    diffOther = diffOther[0:-1]
-    diffOther[0] = 0
+    diffOthers = np.append(np.array(df_train['otherGrids']), 0) - np.append(0,np.array(df_train['otherGrids']))
+    diffOthers = diffOthers[0:-1]
+    diffOthers[0] = 0
 
     df_train['diffMain'] = diffMain
-    df_train['diffOther'] = diffOther
+    df_train['diffOthers'] = diffOthers
 
     df_hourDiffMain = pd.DataFrame()
+    df_hourDiffOther = pd.DataFrame()
     for hour in np.arange(24):
         hourDiffList = df_train.loc[df_train['hourOfDay'] == hour]['diffMain'].values
-
         df_hourDiffMain[str(hour)] = hourDiffList
+        hourDiffList = df_train.loc[df_train['hourOfDay'] == hour]['diffOthers'].values
+        df_hourDiffOther[str(hour)] = hourDiffList
 
-    figure(figsize=(22, 5), dpi=80, linewidth=5)
-    plt.title("boxplts of every hour through time")
-    df_hourDiffMain.boxplot()
-    plt.show()
+    # figure(figsize=(22, 5), dpi=80, linewidth=5)
+    # plt.title("Main Grid boxplt change of every hour through time")
+    # df_hourDiffMain.boxplot()
+    # figure(figsize=(22, 5), dpi=80, linewidth=5)
+    # plt.title("Other Grids boxplt change of every hour through time")
+    # df_hourDiffOther.boxplot()
+    # plt.show()
+    #
+    # fig, (ax1, ax2) = plt.subplots(1, 2)
+    # ax1.boxplot(diffMain)
+    # ax1.set_title("main Grid")
+    # ax2.boxplot(diffOthers)
+    # ax2.set_title("other Grids")
+    # plt.show()
+    #
+    # figure(figsize=(22, 5), dpi=80, linewidth=1)
+    # plt.plot(df_train['timestamps'], df_train['mainGrid'], 'r-')
+    # plt.plot(df_train['timestamps'], df_train['otherGrids'], 'b-')
+    # plt.title('Power constumption')
+    # plt.xlabel('time', fontsize=14)
+    # plt.ylabel('consumption', fontsize=14)
+    # plt.show()
+    #
+    # figure(figsize=(22, 5), dpi=80, linewidth=1)
+    # plt.plot(df_train['timestamps'], df_train['diffMain'], 'r-')
+    # plt.plot(df_train['timestamps'], df_train['diffOthers'], 'b-')
+    # plt.title('Power constumption diff')
+    # plt.xlabel('time', fontsize=14)
+    # plt.ylabel('consumption', fontsize=14)
+    # plt.show()
 
-    fig, (ax1, ax2) = plt.subplots(1, 2)
-    ax1.boxplot(diffMain)
-    ax1.set_title("main Grid")
-    ax2.boxplot(diffOther)
-    ax2.set_title("other Grids")
-    plt.show()
-
-    plt.plot(df_train.timestamps[1:], diffMain)
-    plt.show()
-
-    fig, (ax1, ax2) = plt.subplots(1,2)
-    ax1.boxplot(df_train['mainGrid'])
-    ax1.set_title('main grid')
-    ax2.boxplot(df_train['otherGrids'])
-    ax2.set_title('other grids')
-    plt.show()
-
-    figure(figsize=(22, 5), dpi=80, linewidth=5)
-    plt.plot(timestamp_list, df_train['mainGrid'],'r.')
-    plt.plot(timestamp_list, df_train['otherGrids'], 'b.')
-    plt.title('Power constumption')
-    plt.xlabel('time', fontsize=14)
-    plt.ylabel('consumption', fontsize=14)
-    plt.show()
+    return df_train, df_test
 
 
 if __name__ == "__main__":
-    main()
+    dataPreprocesssing()
 
 
 '''
