@@ -5,7 +5,7 @@ from scipy.fftpack import rfft, rfftfreq
 import scipy.signal.windows as window
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
-from sklearn import datasets, linear_model
+from sklearn import datasets, linear_model, metrics
 from statsmodels.tsa.seasonal import STL, seasonal_decompose
 import pandas as pd
 
@@ -90,7 +90,7 @@ def rmSeasonality(df_train):
     #sd_6 = seasonal_decompose(df_train['mainGrid'].values.reshape(-1, 1) - np.array(sd_5.seasonal).reshape(-1, 1), period=int(top5hourSeason[6]))
     #sd_7 = seasonal_decompose(df_train['mainGrid'].values.reshape(-1, 1) - np.array(sd_6.seasonal).reshape(-1, 1), period=int(top5hourSeason[7]))
 
-    offset = np.mean(sd_3.trend)
+    offset = np.nanmean(sd_3.trend)
 
     # drawing figure with subplots, predefined size and resolution
     f, axes = plt.subplots(8, 1, figsize=(130, 8))
@@ -149,7 +149,7 @@ def rmSeasonality(df_train):
     para1, para1_cov = curve_fit(f1, x, sd_1.seasonal)
     para2, para2_cov = curve_fit(f2, x, sd_2.seasonal)
     para3, para3_cov = curve_fit(f3, x, sd_3.seasonal)
-    # x_plt = x[1000:1500]
+    x_plt = x[1000:1500]
     # plt.plot(x_plt, f0(x_plt, para0[0], para0[1], para0[2], para0[3], para0[4]))
     # plt.plot(x_plt, sd_0.seasonal[1000:1500])
     # plt.show()
@@ -157,7 +157,20 @@ def rmSeasonality(df_train):
     # FINAL ADDITIVE MODEL:
     def model_additive(t):
         return f0x(t, para0) + f1x(t, para1) + f2x(t, para2) + f3x(t, para3) + offset
-    # TODO test accuracy of model, clean up code
+
+    t = df_test.iloc[:, 0].values
+    plt.figure()
+    plt.plot(t, model_additive(t), )
+    plt.plot(t, df_test['mainGrid'])
+    plt.show()
+
+    mse = metrics.mean_squared_error(df_test["mainGrid"], model_additive(t))
+    print("============================")
+    print("Additive model MSE:")
+    print(" \t\t\t " + str(np.round(mse,4)))
+    print("============================")
+
+
 
 def additiveModel(df_train):
     #df = rmTrend(df_train)
