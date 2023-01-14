@@ -24,7 +24,7 @@ def dataPreprocesssing():
     #        print("wtf")
     df.at[wrongHoursIndex, 'hourOfDay'] = 9
 
-    df_train, df_test = train_test_split(df, test_size=3528, shuffle=False)
+    df_train, df_test = train_test_split(df, test_size=6000, shuffle=False) # ~20% test split
     # hourly change in consumption
     diffMain = np.append(np.array(df_train['mainGrid']), 0) - np.append(0,np.array(df_train['mainGrid']))
     diffMain = diffMain[0:-1]
