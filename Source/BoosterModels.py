@@ -1,8 +1,6 @@
 from Source.DataPreprocessing import dataPreprocesssing
 from xgboost import XGBRegressor
 import lightgbm as lgb
-from sktime.forecasting.compose import make_reduction
-from sktime.forecasting.model_selection import (ExpandingWindowSplitter, ForecastingGridSearchCV)
 from Evaluation import *
 
 def create_features(df, target_variable):
