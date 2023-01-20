@@ -6,12 +6,12 @@ from Evaluation import *
 # Sources used: https://www.kaggle.com/code/enesdilsiz/time-series-forecasting-with-lightgbm/data
 #               https://michael-fuchs-python.netlify.app/2020/11/10/time-series-analysis-xgboost-for-univariate-time-series/
 
-def createTimeFeatures(df, target_variable):
+def createTimeFeatures(df, target_feature):
     """
     Creates time series features from timestamps feature
 
     :param df: dataframe containing "timestamps" feature, which represents date + time
-    :param target_variable: name of target feature as str
+    :param target_feature: name of target feature as str
     :return: dataframe containing time features
     """
     df['date'] = df.index
@@ -26,8 +26,8 @@ def createTimeFeatures(df, target_variable):
 
     X = df[['hour', 'dayofweek', 'quarter', 'month', 'year',
             'dayofyear', 'dayofmonth', 'weekofyear']]
-    if target_variable:
-        y = df[target_variable]
+    if target_feature:
+        y = df[target_feature]
         return X, y
     return X
 
@@ -48,7 +48,7 @@ xgb.fit(trainX, trainY, verbose=False)
 predicted_results = xgb.predict(testX)
 evaluationMetrics(testY, predicted_results)
 
-plotActualVsPred(testY, predicted_results)
+plotActualVsPred(testY, predicted_results, 'mainGrid')
 
 
 '''
@@ -59,4 +59,4 @@ lgbm.fit(trainX, trainY)
 predicted_results = lgbm.predict(testX)
 evaluationMetrics(testY, predicted_results)
 
-plotActualVsPred(testY, predicted_results)
+plotActualVsPred(testY, predicted_results, 'mainGrid')

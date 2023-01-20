@@ -5,6 +5,7 @@ from sklearn.metrics import *
 import statsmodels.api as sm
 import statsmodels.tsa.api as smt
 
+
 def evaluationMetrics(y_test, y_pred):
     """
     Calculate the following evaluation metrics:
@@ -22,6 +23,7 @@ def evaluationMetrics(y_test, y_pred):
     print(f'MAE is : {mean_absolute_error(y_test, y_pred)}')
     print(f'RMSE is : {np.sqrt(mean_squared_error(y_test, y_pred))}')
     print(f'R2 is : {r2_score(y_test, y_pred)}', end='\n\n')
+
 
 # Source: https://towardsdatascience.com/multi-step-time-series-forecasting-with-arima-lightgbm-and-prophet-cc9e3f95dfb0
 def tsplot(y, lags=None, figsize=(12, 7)):
@@ -49,19 +51,20 @@ def tsplot(y, lags=None, figsize=(12, 7)):
     smt.graphics.plot_pacf(y, lags=lags, ax=pacf_ax, method='ywm')
     plt.tight_layout()
 
-def plotActualVsPred(y_test, predicted_results):
+
+def plotActualVsPred(y_test, y_pred, target_feature):
     """
     Plot true test data values vs predicted values
 
+    :param target_feature: predicted feature name as str
     :param y_test: true test data
-    :param predicted_results: predicted values for the test data
+    :param y_pred: predicted values for the test data
     :return:
     """
     plt.figure(figsize=(13, 8))
     plt.plot(list(y_test))
-    plt.plot(list(predicted_results))
+    plt.plot(list(y_pred))
     plt.title("Actual vs Predicted")
-    plt.ylabel("mainGrid")
+    plt.ylabel(target_feature)
     plt.legend(('Actual', 'predicted'))
     plt.show()
-

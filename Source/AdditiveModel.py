@@ -17,7 +17,6 @@ def plotDataAndWindow(time_: np.ndarray,
     plt.plot(time_, val_window, label='windowed time')
     plt.legend()
     plt.show()
-    return
 
 def plotFTResults(val_orig_psd: np.ndarray,
                   val_widw_psd: np.ndarray,
