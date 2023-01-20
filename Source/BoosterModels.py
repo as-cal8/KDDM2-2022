@@ -3,18 +3,16 @@ from xgboost import XGBRegressor
 import lightgbm as lgb
 from Evaluation import *
 
-def create_features(df, target_variable):
+# Sources used: https://www.kaggle.com/code/enesdilsiz/time-series-forecasting-with-lightgbm/data
+#               https://michael-fuchs-python.netlify.app/2020/11/10/time-series-analysis-xgboost-for-univariate-time-series/
+
+def createTimeFeatures(df, target_variable):
     """
-    Creates time series features from datetime index
+    Creates time series features from timestamps feature
 
-    Args:
-        df (float64): Values to be added to the model incl. corresponding datetime
-                      , numpy array of floats
-        target_variable (string): Name of the target variable within df
-
-    Returns:
-        X (int): Extracted values from datetime index, dataframe
-        y (int): Values of target variable, numpy array of integers
+    :param df: dataframe containing "timestamps" feature, which represents date + time
+    :param target_variable: name of target feature as str
+    :return: dataframe containing time features
     """
     df['date'] = df.index
     df['hour'] = df['timestamps'].dt.hour
@@ -39,8 +37,8 @@ df_test.rename(columns={'Unnamed: 0':'hour'}, inplace=True)
 
 tsplot(df_train['mainGrid'])
 
-trainX, trainY = create_features(df_train, 'mainGrid')
-testX, testY = create_features(df_test, 'mainGrid')
+trainX, trainY = createTimeFeatures(df_train, 'mainGrid')
+testX, testY = createTimeFeatures(df_test, 'mainGrid')
 
 '''
 XGBoost
@@ -48,7 +46,7 @@ XGBoost
 xgb = XGBRegressor(objective= 'reg:linear', n_estimators=1000)
 xgb.fit(trainX, trainY, verbose=False)
 predicted_results = xgb.predict(testX)
-timeseries_evaluation_metrics_func(testY, predicted_results)
+evaluationMetrics(testY, predicted_results)
 
 plotActualVsPred(testY, predicted_results)
 
@@ -59,6 +57,6 @@ LightGBM
 lgbm = lgb.LGBMRegressor(n_estimators=1000, objective="regression")
 lgbm.fit(trainX, trainY)
 predicted_results = lgbm.predict(testX)
-timeseries_evaluation_metrics_func(testY, predicted_results)
+evaluationMetrics(testY, predicted_results)
 
 plotActualVsPred(testY, predicted_results)

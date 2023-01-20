@@ -14,6 +14,11 @@ path = os.getcwd() + str("\\Data\\powerSupplyStream.csv")
 
 
 def main():
+    """
+    Downloading raw data, save features to csv with header.
+
+    :return:
+    """
     urlPowerSupply = "https://www.cse.fau.edu/~xqzhu/Stream/powersupply.arff"
     ftpstream = urllib.request.urlopen(urlPowerSupply)
     data, meta = arff.loadarff(io.StringIO(ftpstream.read().decode('utf-8')))

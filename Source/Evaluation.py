@@ -5,33 +5,33 @@ from sklearn.metrics import *
 import statsmodels.api as sm
 import statsmodels.tsa.api as smt
 
-def timeseries_evaluation_metrics_func(y_true, y_pred):
-    '''
+def evaluationMetrics(y_test, y_pred):
+    """
     Calculate the following evaluation metrics:
         - MSE
         - MAE
         - RMSE
-        - R²
+        - R^2
 
-    Args:
-        y_true (float64): Y values for the dependent variable (test part), numpy array of floats
-        y_pred (float64): Predicted values for the dependen variable (test parrt), numpy array of floats
-
-    Returns:
-        MSE, MAE, RMSE, and R²
-    '''
+    :param y_test: true values of the test data
+    :param y_pred: predicted values for the test data
+    :return: MSE, MAE, RMSE, and R^2
+    """
     print('Evaluation metric results: ')
-    print(f'MSE is : {mean_squared_error(y_true, y_pred)}')
-    print(f'MAE is : {mean_absolute_error(y_true, y_pred)}')
-    print(f'RMSE is : {np.sqrt(mean_squared_error(y_true, y_pred))}')
-    print(f'R2 is : {r2_score(y_true, y_pred)}', end='\n\n')
+    print(f'MSE is : {mean_squared_error(y_test, y_pred)}')
+    print(f'MAE is : {mean_absolute_error(y_test, y_pred)}')
+    print(f'RMSE is : {np.sqrt(mean_squared_error(y_test, y_pred))}')
+    print(f'R2 is : {r2_score(y_test, y_pred)}', end='\n\n')
 
+# Source: https://towardsdatascience.com/multi-step-time-series-forecasting-with-arima-lightgbm-and-prophet-cc9e3f95dfb0
 def tsplot(y, lags=None, figsize=(12, 7)):
     """
-        Plot time series, its ACF and PACF, calculate Dickey–Fuller test
+    Plot time series, its ACF and PACF, calculate Dickey–Fuller test
 
-        y - timeseries
-        lags - how many lags to include in ACF, PACF calculation
+    :param y: timeseries
+    :param lags: how many lags to include in ACF, PACF calculation
+    :param figsize: figure size default (12, 7)
+    :return:
     """
     if not isinstance(y, pd.Series):
         y = pd.Series(y)
@@ -49,9 +49,16 @@ def tsplot(y, lags=None, figsize=(12, 7)):
     smt.graphics.plot_pacf(y, lags=lags, ax=pacf_ax, method='ywm')
     plt.tight_layout()
 
-def plotActualVsPred(testY, predicted_results):
+def plotActualVsPred(y_test, predicted_results):
+    """
+    Plot true test data values vs predicted values
+
+    :param y_test: true test data
+    :param predicted_results: predicted values for the test data
+    :return:
+    """
     plt.figure(figsize=(13, 8))
-    plt.plot(list(testY))
+    plt.plot(list(y_test))
     plt.plot(list(predicted_results))
     plt.title("Actual vs Predicted")
     plt.ylabel("mainGrid")

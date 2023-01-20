@@ -1,3 +1,6 @@
+# Sources used: https://towardsai.net/p/machine-learning/seasonality-detection-with-fast-fourier-transform-fft-and-python
+#               https://github.com/netsatsawat/tutorial_fft_seasonality_detection/blob/master/FFT%20Tutorial.ipynb
+
 import DataPreprocessing
 from scipy.fftpack import rfft, rfftfreq
 import scipy.signal.windows as window
@@ -164,7 +167,7 @@ def additiveModel(df_train, t=None, ignore_plots=False):
         plt.plot(t_test, df_test['mainGrid'])
         plt.show()
 
-        timeseries_evaluation_metrics_func(model_additive(t_test), df_test["mainGrid"])
+        evaluationMetrics(model_additive(t_test), df_test["mainGrid"])
 
     if t is not None:
         return model_additive(t)
