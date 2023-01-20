@@ -10,7 +10,7 @@ import os
 
 ##### POWER SUPPLY DATA STREAM #####
 header = np.array(["mainGrid", "otherGrids", "hourOfDay"])
-path = os.getcwd() + str("\\powerSupplyStream.csv")
+path = os.getcwd() + str("\\Data\\powerSupplyStream.csv")
 
 def main():
     urlPowerSupply = "https://www.cse.fau.edu/~xqzhu/Stream/powersupply.arff"

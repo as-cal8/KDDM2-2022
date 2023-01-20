@@ -1,23 +1,10 @@
-
 import DataPreprocessing
-import numpy as np
 from scipy.fftpack import rfft, rfftfreq
 import scipy.signal.windows as window
 from scipy.optimize import curve_fit
-import matplotlib.pyplot as plt
-from sklearn import datasets, linear_model, metrics
-from statsmodels.tsa.seasonal import STL, seasonal_decompose
-import pandas as pd
-
-def accuracy(df_predicted, df_true):
-    mse = metrics.mean_squared_error(df_true, df_predicted)
-    rmse = np.sqrt(mse)
-    print("============================")
-    print("Additive model MSE:")
-    print(" \t\t\t " + str(np.round(mse, 4)))
-    print("               RMSE:")
-    print(" \t\t\t " + str(np.round(rmse, 4)))
-    print("============================")
+from statsmodels.tsa.seasonal import seasonal_decompose
+from Evaluation import *
+import os
 
 def plotDataAndWindow(time_: np.ndarray,
                       val_orig: pd.core.series.Series,
@@ -28,7 +15,6 @@ def plotDataAndWindow(time_: np.ndarray,
     plt.legend()
     plt.show()
     return
-
 
 def plotFTResults(val_orig_psd: np.ndarray,
                   val_widw_psd: np.ndarray,
@@ -46,22 +32,6 @@ def plotFTResults(val_orig_psd: np.ndarray,
     plt.tight_layout()
     plt.show()
     return
-
-def rmTrend(df_train):
-    regr = linear_model.LinearRegression()
-    x = df_train.iloc[:, 0].values
-    y = df_train['mainGrid'].values
-    x = x.reshape(np.size(x), 1)
-    y = y.reshape(np.size(y), 1)
-    regr.fit(x,y)
-    mainPred = regr.predict(df_train['mainGrid'].values.reshape(np.size(x), 1))
-    mainDetrend = df_train['mainGrid'].values.reshape(np.size(x), 1)-mainPred
-    df_train['detrendMain'] = mainDetrend
-    return df_train
-
-
-
-
 
 def additiveModel(df_train, t=None, ignore_plots=False):
     data_mainGrid = df_train['mainGrid']
@@ -131,7 +101,8 @@ def additiveModel(df_train, t=None, ignore_plots=False):
         plt.show()
 
     # save residuals/ noise to csv for further use
-    np.savetxt("noise.csv", sd_3.resid, delimiter=",")
+    path = os.getcwd() + str("\\Data\\noise.csv")
+    np.savetxt(path, sd_3.resid, delimiter=",")
 
     # wave functions to model found seasons
     def f0(t, A, b, C, d, E):
@@ -193,13 +164,10 @@ def additiveModel(df_train, t=None, ignore_plots=False):
         plt.plot(t_test, df_test['mainGrid'])
         plt.show()
 
-        accuracy(model_additive(t_test), df_test["mainGrid"])
-
+        timeseries_evaluation_metrics_func(model_additive(t_test), df_test["mainGrid"])
 
     if t is not None:
         return model_additive(t)
-
-
 
 '''
 - data_train, training dataset, where seasons are extracted. (from DataPreprocessing)
@@ -214,5 +182,4 @@ def getAdditiveModel(data_train, t):
 if __name__ == "__main__":
     df_train, df_test = DataPreprocessing.dataPreprocesssing()
     t = df_test.iloc[:, 0].values
-    add = additiveModel(df_train, t, ignore_plots=True)
-    additiveModel(df_train)
+    additiveModel(df_train, t, ignore_plots=False)
