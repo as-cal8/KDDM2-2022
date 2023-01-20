@@ -18,11 +18,11 @@ def dataPreprocesssing():
 
     # mistake in hours numbering hour 6 = 1248 instances
     #                                 9 = 1246 instances
-    wrongHoursIndex = [24969]
+    wrongHoursIndex = 24969
     #for i in np.arange(len(df)-1):
     #    if df['hourOfDay'][i]+1 != df['hourOfDay'][i + 1] and df['hourOfDay'][i] != 23:
     #        print("wtf")
-    df.at[wrongHoursIndex, 'hourOfDay'] = 9
+    df.at[wrongHoursIndex, "hourOfDay"] = 9
 
     df_train, df_test = train_test_split(df, test_size=6000, shuffle=False) # ~20% test split
     # hourly change in consumption

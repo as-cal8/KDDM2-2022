@@ -9,6 +9,16 @@ from sklearn import datasets, linear_model, metrics
 from statsmodels.tsa.seasonal import STL, seasonal_decompose
 import pandas as pd
 
+def accuracy(df_predicted, df_true):
+    mse = metrics.mean_squared_error(df_true, df_predicted)
+    rmse = np.sqrt(mse)
+    print("============================")
+    print("Additive model MSE:")
+    print(" \t\t\t " + str(np.round(mse, 4)))
+    print("               RMSE:")
+    print(" \t\t\t " + str(np.round(rmse, 4)))
+    print("============================")
+
 def plotDataAndWindow(time_: np.ndarray,
                       val_orig: pd.core.series.Series,
                       val_window: pd.core.series.Series):
@@ -183,17 +193,12 @@ def additiveModel(df_train, t=None, ignore_plots=False):
         plt.plot(t_test, df_test['mainGrid'])
         plt.show()
 
-        mse = metrics.mean_squared_error(df_test["mainGrid"], model_additive(t_test))
-        rmse = np.sqrt(mse)
-        print("============================")
-        print("Additive model MSE:")
-        print(" \t\t\t " + str(np.round(mse, 4)))
-        print("               RMSE:")
-        print(" \t\t\t " + str(np.round(rmse, 4)))
-        print("============================")
+        accuracy(model_additive(t_test), df_test["mainGrid"])
+
 
     if t is not None:
         return model_additive(t)
+
 
 
 '''
@@ -208,4 +213,6 @@ def getAdditiveModel(data_train, t):
 
 if __name__ == "__main__":
     df_train, df_test = DataPreprocessing.dataPreprocesssing()
+    t = df_test.iloc[:, 0].values
+    add = additiveModel(df_train, t, ignore_plots=True)
     additiveModel(df_train)
