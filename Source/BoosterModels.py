@@ -54,7 +54,7 @@ plotActualVsPred(testY, predicted_results, 'mainGrid')
 '''
 LightGBM
 '''
-lgbm = lgb.LGBMRegressor(n_estimators=1000, objective="regression")
+lgbm = lgb.LGBMRegressor(objective="regression", n_estimators=1000)
 lgbm.fit(trainX, trainY)
 predicted_results = lgbm.predict(testX)
 evaluationMetrics(testY, predicted_results)

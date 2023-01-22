@@ -1,4 +1,6 @@
-Timeseries Prediction 	
+Timeseries Prediction
+
+TODO: TABLE with Python and package Versions!
 
 Task: Given a set of sensor data for multiple streams, e.g. temperature, power consumption. The goal is to predict the future values of these signals, optimally including a confidence range.
 
