@@ -10,22 +10,15 @@ from scipy.optimize import curve_fit
 from statsmodels.tsa.seasonal import seasonal_decompose
 from Evaluation import *
 import os
-from scipy.optimize import leastsq
-from statsmodels.tsa.arima.model import ARIMA
 
-def plotDataAndWindow(time_: np.ndarray,
-                      val_orig: pd.core.series.Series,
-                      val_window: pd.core.series.Series):
+def plotDataAndWindow(time_, val_orig, val_window):
     plt.figure(figsize=(14, 10))
     plt.plot(time_, val_orig, label='raw')
     plt.plot(time_, val_window, label='windowed time')
     plt.legend()
     plt.show()
 
-def plotFTResults(val_orig_psd: np.ndarray,
-                  val_widw_psd: np.ndarray,
-                  ft_smpl_freq: np.ndarray,
-                  pos: int = 2, annot_mode: bool = True
+def plotFTResults(val_orig_psd, val_widw_psd, ft_smpl_freq, pos: int = 2
                   ):
     """
     For PSD graph, the first few points are removed because it represents the baseline (or mean)
@@ -50,7 +43,6 @@ def FFTAnalysis(data_mainGrid, ignore_plots):
     #data_window = data_mainGrid
     Fs = 1  # sampling rate
     fftt = np.abs(rfft(data_window)) / len(data_window)
-    amplitudes = 2 / len(data_window) * np.abs(fftt)
     ind = np.argpartition(fftt, -10)[-10:]
     ind = ind[-5:]
     topFFTT = np.flip(np.sort(fftt[ind]))
@@ -74,29 +66,6 @@ def FFTAnalysis(data_mainGrid, ignore_plots):
         plotFTResults(fftt, abs(rfft(data_window) / len(data_window)), freq)
     plt.plot(df_train['timestamps'][5408:23031], df_train.mainGrid[5408:23031])
     return topHourSeason, topDaySeason
-
-def FFTAnalysisAny(data, ignore_plots=False):
-    data_window = data
-    Fs = 1  # sampling rate
-    fftt = np.abs(rfft(data_window)) / len(data_window)
-    ind = np.argpartition(fftt, -10)[-10:]
-    ind = ind[-5:]
-    freq = rfftfreq(int(len(data_window)), d=1 / Fs)
-    topFreq = np.unique(freq[ind])
-    topFreq = topFreq[topFreq != 0.]  # 0 is baseline, useless
-    topHourSeason = np.sort(1 / topFreq)
-    topDaySeason = topHourSeason / 24
-    if not ignore_plots:
-        print("Top 4 found frequencies [1/h]: ")
-        print(topFreq)
-        print(" \t\t [hours]: ")
-        print(topHourSeason)
-        print(" \t\t [days]: ")
-        print(topDaySeason)
-
-        plotFTResults(fftt, abs(rfft(data_window) / len(data_window)), freq)
-    return topHourSeason, topDaySeason
-
 
 def additiveModel(df_train, t=None, ignore_plots=False):
     data_mainGrid = df_train['mainGrid']
@@ -165,10 +134,11 @@ def additiveModel(df_train, t=None, ignore_plots=False):
     def f1x(t, params):
         return f1(t, params[0], params[1], params[2])
 
-    '''
-    For predicting more complicated season, repeating pattern was used.
-    '''
+
     def f2x(t):
+        '''
+        For predicting more complicated season, repeating pattern was used.
+        '''
         prediction = []
         for ti in t:
             pred_i = ti-int(np.round(topHourSeason[2]))
@@ -185,13 +155,7 @@ def additiveModel(df_train, t=None, ignore_plots=False):
     def f3x(t, params):
         return f3(t, params[0], params[1], params[2])
 
-    def f3MAx(t):
-        '''
-        moving average of yearly season
-        :param t:
-        :param params:
-        :return:
-        '''
+    def f3MAx(t): # not used
         prediction = []
         for ti in t:
             pred_i = ti - int(np.round(topHourSeason[3]))
@@ -233,10 +197,11 @@ def additiveModel(df_train, t=None, ignore_plots=False):
         """
         return f0x(t, para0) + f1x(t, para1) + f2x(t) + f3x(t, para3) + f4x(t, para4)
 
+    t_test = df_test.iloc[:, 0].values
     if not ignore_plots:
-        t_test = df_test.iloc[:, 0].values
         plotActualVsPred(df_test['mainGrid'], modelAdditive(t_test), 'mainGrid')
-        evaluationMetrics(modelAdditive(t_test), df_test["mainGrid"])
+
+    evaluationMetrics(modelAdditive(t_test), df_test["mainGrid"])
 
     if t is not None:
         return modelAdditive(t)

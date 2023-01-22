@@ -10,7 +10,7 @@ import os
 
 ##### POWER SUPPLY DATA STREAM #####
 header = np.array(["mainGrid", "otherGrids", "hourOfDay"])
-path = os.getcwd() + str("\\Data\\powerSupplyStream.csv")
+path = os.getcwd() + str("/Data/powerSupplyStream.csv")
 
 
 def main():
