@@ -1,9 +1,7 @@
-
-from keras.preprocessing.sequence import TimeseriesGenerator
 import numpy as np
 import matplotlib.pyplot as plt
-from pandas import read_csv
 import pandas as pd
+from pandas import read_csv
 import math
 import tensorflow as tf
 from tensorflow import keras
@@ -16,24 +14,57 @@ from keras.callbacks import EarlyStopping
 from keras.callbacks import ModelCheckpoint
 from keras.utils.vis_utils import plot_model
 from tensorflow.keras.metrics import RootMeanSquaredError, MeanAbsoluteError
-# from ../../AdditiveModel import additiveModel
-#from ../../DataPreprocessing import dataPreprocesssing
+from keras.preprocessing.sequence import TimeseriesGenerator
+
+import sys
+import os
+
+path = os.getcwd()
+if path.endswith('LSTM'):
+    path = path[:-4]
+path = path + str("Source")
+sys.path.insert(0, path)
+
+from DataPreprocessing import dataPreprocesssing
+from AdditiveModel import additiveModel
+
+pathData = path + str("/Data")
+
+TRAIN_MODEL = False #Make it True for Training new models
+Testing_noise = False # Evaluating Noise Data for additive model
+
 TRIAN_SIZE = 23928 #80 percent of the dataset
+MODELS_NAMES = ['./Mt8','./Mt9','./Mt10','./Mt11','./Mt12','./Mt13','./Mt14']
+CSV_FILE = 'LSTM_models_performance'
+
+LOOK_BACK_LIST = [12,12,5,24,24,24,24]
+LOOK_BACK = 12 #Used only for traning
+
+if(Testing_noise):
+            MODELS_NAMES = ['Mt5_noise','.Mt6_noise','.Mt7_noise','.Mt15_noise','.Mt16_noise','.Mt17_noise']
+            LOOK_BACK_LIST = [12,12,12,24,24,5]
+            CSV_FILE = 'LSTM_models_noise_performance'
 
 
 def extracted_features():
 
-    dataframe= pd.read_csv('noise.csv')
+    if Testing_noise:
+      dataframe= pd.read_csv(pathData+'/noise.csv')
+    else:
+      dataframe= pd.read_csv(pathData+'/powerSupplyStream.csv', usecols=['mainGrid'])
+
     dataset = dataframe.values
     dataset = dataset.astype('float64')
 
-    print(len(dataframe)-3829)
-    train_size = TRIAN_SIZE-3829
-    test_size = len(dataset) - train_size
-
-    train = dataset[:15312]
-    valid = dataset[15312:20098]
-    test = dataset[20098:]
+    #Split the dataset into train/ validate/ test sets
+    if Testing_noise:
+      train = dataset[:15312]
+      valid = dataset[15312:20098]
+      test = dataset[20098:]
+    else:
+      train = dataset[:19143]
+      valid = dataset[19143:23928]
+      test = dataset[23928:]
 
     #normalize the dataset
     scaler = MinMaxScaler(feature_range=(0, 1))
@@ -41,7 +72,7 @@ def extracted_features():
     dataset_valid = scaler.fit_transform(valid)
     dataset_test = scaler.fit_transform(test)
 
-    # # split into train and test sets
+    # Generating timeseries dataset
     look_back= LOOK_BACK
     n_features = 1
     generator_train = TimeseriesGenerator(dataset_train, dataset_train, length=look_back, batch_size=1)
@@ -49,9 +80,8 @@ def extracted_features():
 
     return generator_train, generator_valid, dataset_train, dataset_test, scaler
 
-def  LSTM_Model(generator_train, generator_valid, scaler ):
-
-
+def LSTM_Model(generator_train, generator_valid, scaler ):
+    #Build Model
     model = Sequential()
     model.add(LSTM(64, return_sequences=True, input_shape=(LOOK_BACK, 1)))
 
@@ -70,10 +100,6 @@ def  LSTM_Model(generator_train, generator_valid, scaler ):
     save_best = ModelCheckpoint(MODEL_NAME, save_best_only=True, monitor='val_root_mean_squared_error', mode='min')
     model.fit(generator_train, epochs=60, batch_size=32, verbose=True, validation_data =generator_valid , callbacks = [early_stopping,save_best])
     loss_per_epoch = model.history.history['val_loss']
-    plt.plot(range(len(loss_per_epoch)),loss_per_epoch)
-    plt.show()
-    plt.plot(model.history.history['val_root_mean_squared_error'])
-    plt.show()
 
     return model
 
@@ -93,6 +119,7 @@ def evaluate_model(model,dataset_train, dataset_test, scaler,look_back):
     dataset_test = scaler.inverse_transform(dataset_test)
 
     # plot baseline and predictions
+    plt.figure(figsize=(15,10))
     plt.plot(dataset_test[:1000],label='Actual')
     plt.plot(true_predictions[:1000],label='Predicted')
     plt.xlabel("Time Series in hrs")
@@ -105,10 +132,7 @@ def evaluate_model(model,dataset_train, dataset_test, scaler,look_back):
         plt.title("Noise Values")
     else:
         plt.title("Sensor Values")
-
-
     plt.show()
-
 
     rmse=np.sqrt(mean_squared_error(dataset_test[:3829],true_predictions[:3829]))#3829
     print(rmse)
@@ -117,13 +141,8 @@ def evaluate_model(model,dataset_train, dataset_test, scaler,look_back):
 def LSTM_Additive_model(predictions):
     df_train, df_test = dataPreprocesssing()
     t = df_test.iloc[:, 0].values
-    print(len(t))
     add = additiveModel(df_train, t, ignore_plots=True)
-    # len(add)
-    print(type(add))
-    print(type(predictions))
-    print(add.shape)
-    print(predictions.shape)
+
     plt.plot(add)
     plt.show()
     final = []
@@ -132,38 +151,15 @@ def LSTM_Additive_model(predictions):
     predict = predictions
     for i in range(0,6000,1):
         final.append(add[i] + predict[i][0])
-    print(len(final))
-    plt.plot(final)
-    plt.plot(df_test['mainGrid'].values)
+    plt.figure(figsize=(15,10))
+    plt.plot(df_test['mainGrid'].values, label="Actual")
+    plt.plot(final, label = 'Predicted')
     plt.show()
     rmse = np.sqrt(mean_squared_error(df_test['mainGrid'].values, final))
     return rmse
 
-
-
-Path='./drive/MyDrive/KDDM2_Models/'
-TRAIN_MODEL = False
-TRIAN_SIZE = 23928 #80 percent of the dataset
-MODELS_NAMES = ['./Mt9','./Mt10']#,'./Mt11','./Mt12','./Mt13','./Mt14']
-CSV_FILE = 'LSTM_models_performance'
-
-MODELS_NAMES_NOISE = [Path+'./Mt16_noise',Path+'./Mt17_noise']#,'./Mt11','./Mt12','./Mt13','./Mt14']
-LOOK_BACK_LIST = [12,5]#,24,24,24,24]
-LOOK_BACK_NOISE_LIST = [24,5]#,24,24,24,24]
-LOOK_BACK = 12
-Testing_noise = False
-if(Testing_noise):
-            MODELS_NAMES = ['./drive/MyDrive/KDDM2_Models/Mt16_noise','./drive/MyDrive/KDDM2_Models/Mt17_noise']
-            LOOK_BACK_LIST = [24,5]#,24,24,24,24]
-            CSV_FILE = 'LSTM_models_noise_performance'
-#mt5_noise window 24
-#mt6_noise window 24
-#mt7_noise window 24
-#mt15_noise window 24
-#mt16_noise window 24
-#mt17_noise window 5
-
 def main():
+
     generator_train, generator_valid,dataset_train, dataset_test, scaler = extracted_features()
 
     if (TRAIN_MODEL):
@@ -179,13 +175,15 @@ def main():
                 rmse_orignal = LSTM_Additive_model(predictions)
                 performance_table = performance_table.append({'Model_Name':MODELS_NAMES[i], 'Test_RMSE':rmse_orignal ,'Window': look_back},ignore_index=True)
                 print(performance_table)
-                performance_table.sort_values(by=['Test_RMSE'],inplace=True)
+                performance_table.sort_values(by=['Test_RMSE'],ascending=True)
             else:
                 performance_table = performance_table.append({'Model_Name':MODELS_NAMES[i], 'Test_RMSE':rmse,'Window': look_back} ,ignore_index=True)
                 print(performance_table)
                 performance_table= performance_table.sort_values(by=['Test_RMSE'], ascending=True)
         print(performance_table)
         performance_table.to_csv(CSV_FILE, index=False)
+
+
 
 if __name__ == "__main__":
     main()
