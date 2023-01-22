@@ -1,6 +1,6 @@
-Timeseries Prediction
+# Timeseries Prediction
 
-Task: Given a set of sensor data for multiple streams, e.g. temperature, power consumption. The goal is to predict the future values of these signals, optimally including a confidence range.
+##Task: Given a set of sensor data for multiple streams, e.g. temperature, power consumption. The goal is to predict the future values of these signals, optimally including a confidence range.
 
 Approach: Take the stream of data and remove the last ~10% of the data. Build a prediction algorithm that is able to predict the future values of the streams as accurately as possible and compare against the values you removed.
 
@@ -21,27 +21,22 @@ The Requirements to reproduce these results are as follows:
 | Python            | 3.8.16 |
 | Numpy             | 1.23.3 |
 | Scipy             | 1.9.3  |
-## TODO
+|pmdarima           | 2.0.2  |
+|statsmodels        |        |
+|tensorflow         | 2.10.0 |
+|Keras              | 2.10   |
 
 Correct Functionality and comparable Results cannot be guaranteed on different Versions.
 
-## TODO combine
-
-Packages used are the following:
-pmdarima    2.0.2
-statsmodels
-tensorflow  2.10.0
-Keras       2.10
-
-To Train LSTM Model
+## To Train LSTM Model
 Enter the and set flag TRAIN_MODEL = true
 Choose a Window size by setting the LOOK_BACK variable
  
-To Evaluate LSTM Model
+## To Evaluate LSTM Model
 Enter the LSTM_Model.py file and set flag TRAIN_MODEL = False
 If testing noise data( from additive model), set the testing_noise = True otherwise set it to False
 
-To Train ARIMA Model 
+## To Train ARIMA Model
 Enter arima_model.py
 
 
