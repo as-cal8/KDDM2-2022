@@ -62,10 +62,10 @@ def arima():
     predict = true_predictions.values
     for i in range(0,6000,1):
         final.append(add[i] + predict[i])
-        
-    plt.figure(figsize(15,10))
-    plt.plot(df_test['mainGrid'].values, labels = 'Actual')
-    plt.plot(final, labels = 'Predicted')
+
+    plt.figure(figsize = (15,10))
+    plt.plot(df_test['mainGrid'].values, label = 'Actual')
+    plt.plot(final, label = 'Predicted')
     plt.legend()
     plt.show()
     rmse = np.sqrt(mean_squared_error(df_test['mainGrid'].values, final))
