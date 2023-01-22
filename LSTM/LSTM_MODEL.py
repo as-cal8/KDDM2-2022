@@ -1,8 +1,7 @@
-from keras.preprocessing.sequence import TimeseriesGenerator
 import numpy as np
 import matplotlib.pyplot as plt
-from pandas import read_csv
 import pandas as pd
+from pandas import read_csv
 import math
 import tensorflow as tf
 from tensorflow import keras
@@ -15,6 +14,8 @@ from keras.callbacks import EarlyStopping
 from keras.callbacks import ModelCheckpoint
 from keras.utils.vis_utils import plot_model
 from tensorflow.keras.metrics import RootMeanSquaredError, MeanAbsoluteError
+from keras.preprocessing.sequence import TimeseriesGenerator
+
 import sys
 import os
 
