@@ -10,3 +10,24 @@ Approach: Take the stream of data and remove the last ~10% of the data. Build a 
       https://www.cse.fau.edu/~xqzhu/stream.html
 
 Advanced: Investigate your prediction algorithm and try to determine under which (controlled) circumstances it makes correct predictions. 
+
+
+
+Packages used are the following:
+pmdarima 2.0.2
+statsmodels
+tensorflow 2.10.0
+Keras 2.10
+
+To Train LSTM Model
+Enter the and set flag TRAIN_MODEL = true
+Choose a Window size by setting the LOOK_BACK variable
+ 
+To Evaluate LSTM Model
+Enter the LSTM_Model.py file and set flag TRAIN_MODEL = False
+If testing noise data( from additive model), set the testing_noise = True otherwise set it to False
+
+To Train ARIMA Model 
+Enter arima_model.py
+
+
