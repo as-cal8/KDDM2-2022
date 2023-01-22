@@ -4,19 +4,21 @@ from matplotlib.pyplot import figure
 import matplotlib.pyplot as plt
 import datetime
 from sklearn.model_selection import train_test_split
+from pmdarima import auto_arima
+from statsmodels.tsa.arima.model import ARIMA
 import sys
 import os
 path = os.getcwd()
-if path.endswith('LSTM'):
-    path = path[:-9]
+if path.endswith('ARIMA'):
+    path = path[:-5]
 path = path + str("Source")
 sys.path.insert(0, path)
-pathData = path + str("\Data")
-print(pathData)
+pathData = path + str("/Data")
+from DataPreprocessing import dataPreprocesssing
+from AdditiveModel import additiveModel
 
 def arima():
-    df= pd.read_csv('./drive/MyDrive/noise.csv')
-
+    df= pd.read_csv(pathData+'/noise.csv')
     from statsmodels.tsa.stattools import adfuller
     dftest = adfuller(df, autolag = 'AIC')
     print("1. ADF : ",dftest[0])
@@ -28,18 +30,14 @@ def arima():
         print("\t",key, ": ", val)
     # Since the p-value is small it is stationary
 
-    from pmdarima import auto_arima
-
+    # Auto Fit the ARIMA Mode and Search the best parameters with the lowest AIC score
     stepwise_fit = auto_arima(df, trace=True,
     suppress_warnings=True)
 
-    print(df.shape)
     train_size = 23927- 2728
     train=df.iloc[:train_size]
     test=df.iloc[23928:]
-    print(train.shape,test.shape)
 
-    from statsmodels.tsa.arima.model import ARIMA
 
     model=ARIMA(train,order=(2,1,4))
     model=model.fit()
@@ -53,13 +51,8 @@ def arima():
     from sklearn.metrics import mean_squared_error
     df_train, df_test = dataPreprocesssing()
     t = df_test.iloc[:, 0].values
-    print(len(t))
     add = additiveModel(df_train, t, ignore_plots=True)
-    # len(add)
-    print(type(add))
-    print(type(true_predictions))
-    print(add.shape)
-    print(true_predictions.shape)
+
     plt.plot(add)
     plt.show()
     final = []
@@ -68,16 +61,12 @@ def arima():
     predict = true_predictions.values
     for i in range(0,6000,1):
         final.append(add[i] + predict[i])
-    print(len(final))
-    plt.plot(final)
-    plt.plot(df_test['mainGrid'].values)
+    plt.plot(df_test['mainGrid'].values, label="Actual")
+    plt.plot(final,label='Predicted')
     plt.show()
     np.sqrt(mean_squared_error(df_test['mainGrid'].values, final))
 
-    #
-
-    model.save('./drive/MyDrive/model_arima_better.pkl')
+    model.save('model_arima.pkl')
 
 if __name__ == '__main__':
     arima()
-# load model
