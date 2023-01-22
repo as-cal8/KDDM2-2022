@@ -52,18 +52,23 @@ def tsplot(y, lags=None, figsize=(12, 7)):
     plt.tight_layout()
 
 
-def plotActualVsPred(y_test, y_pred, target_feature):
+def plotActualVsPred(y_test, y_pred, target_feature, t_test=None):
     """
     Plot true test data values vs predicted values
 
+    :param t_test: timestamps of predicted data, if not set index is generated starting from 0
     :param target_feature: predicted feature name as str
     :param y_test: true test data
     :param y_pred: predicted values for the test data
     :return:
     """
     plt.figure(figsize=(13, 8))
-    plt.plot(list(y_test))
-    plt.plot(list(y_pred))
+    if t_test is not None:
+        plt.plot(t_test, y_test)
+        plt.plot(t_test, y_pred)
+    else:
+        plt.plot(list(y_test))
+        plt.plot(list(y_pred))
     plt.title("Actual vs Predicted")
     plt.ylabel(target_feature)
     plt.legend(('Actual', 'predicted'))
