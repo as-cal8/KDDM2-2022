@@ -180,7 +180,13 @@ def additiveModel(df_train, t=None, ignore_plots=False):
             prediction.append(sd_2.seasonal[pred_i])
         return prediction
 
-    def f3x(t):
+    def f3(t, A, b, C):
+        return A * np.sin(C *2 * np.pi / topHourSeason[3] * t + b)
+
+    def f3x(t, params):
+        return f3(t, params[0], params[1], params[2])
+
+    def f3MAx(t):
         '''
         moving average of yearly season
         :param t:
@@ -206,6 +212,7 @@ def additiveModel(df_train, t=None, ignore_plots=False):
 
     x = df_train.iloc[:, 0].values
     para0, para0_cov = curve_fit(f0, x, sd_0.seasonal)
+    para3, para3_cov = curve_fit(f3, x, sd_3.seasonal)
     para1, para1_cov = curve_fit(f1, x, sd_1.seasonal)
     para4, para4_cov = curve_fit(f4, x, sd_3.trend) # trend component
 
@@ -214,8 +221,8 @@ def additiveModel(df_train, t=None, ignore_plots=False):
     if not ignore_plots:
         plt.figure()
         plt.title("Fitted curve for season 3")
-        plt.plot(x_plt, f4x(x_plt, para4), label="fit")
-        plt.plot(x_plt, sd_3.trend[10000:20000], label="sd_3")
+        plt.plot(x_plt, f3x(x_plt, para3), label="fit")
+        plt.plot(x_plt, sd_3.seasonal[10000:20000], label="sd_3")
         plt.legend()
         plt.show()
 
@@ -227,7 +234,7 @@ def additiveModel(df_train, t=None, ignore_plots=False):
         :param t: time stamps [hour indexes] to predict
         :return: prediction
         """
-        return f0x(t, para0) + f1x(t, para1) + f2x(t) + f3x(t) + f4x(t, para4)
+        return f0x(t, para0) + f1x(t, para1) + f2x(t) + f3x(t, para3) + f4x(t, para4)
 
     if not ignore_plots:
         t_test = df_test.iloc[:, 0].values
