@@ -19,10 +19,11 @@ def evaluationMetrics(y_test, y_pred):
     :return: MSE, MAE, RMSE, and R^2
     """
     print('Evaluation metric results: ')
-    print(f'MSE is : {mean_squared_error(y_test, y_pred)}')
-    print(f'MAE is : {mean_absolute_error(y_test, y_pred)}')
-    print(f'RMSE is : {np.sqrt(mean_squared_error(y_test, y_pred))}')
-    print(f'R2 is : {r2_score(y_test, y_pred)}', end='\n\n')
+    digits = 3
+    print(f'MSE is : {np.round(mean_squared_error(y_test, y_pred), digits)}')
+    print(f'MAE is : {np.round(mean_absolute_error(y_test, y_pred), digits)}')
+    print(f'RMSE is : {np.round(np.sqrt(mean_squared_error(y_test, y_pred)), digits)}')
+    print(f'R2 is : {np.round(r2_score(y_test, y_pred), digits)}', end='\n\n')
 
 
 # Source: https://towardsdatascience.com/multi-step-time-series-forecasting-with-arima-lightgbm-and-prophet-cc9e3f95dfb0

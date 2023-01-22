@@ -1,7 +1,5 @@
 Timeseries Prediction
 
-TODO: TABLE with Python and package Versions!
-
 Task: Given a set of sensor data for multiple streams, e.g. temperature, power consumption. The goal is to predict the future values of these signals, optimally including a confidence range.
 
 Approach: Take the stream of data and remove the last ~10% of the data. Build a prediction algorithm that is able to predict the future values of the streams as accurately as possible and compare against the values you removed.
@@ -14,12 +12,26 @@ Approach: Take the stream of data and remove the last ~10% of the data. Build a 
 Advanced: Investigate your prediction algorithm and try to determine under which (controlled) circumstances it makes correct predictions. 
 
 
+## Prerequisites
+
+The Requirements to reproduce these results are as follows:
+
+|Package            |Version |
+|-------------------|--------|
+| Python            | 3.8.16 |
+| Numpy             | 1.23.3 |
+| Scipy             | 1.9.3  |
+## TODO
+
+Correct Functionality and comparable Results cannot be guaranteed on different Versions.
+
+## TODO combine
 
 Packages used are the following:
-pmdarima 2.0.2
+pmdarima    2.0.2
 statsmodels
-tensorflow 2.10.0
-Keras 2.10
+tensorflow  2.10.0
+Keras       2.10
 
 To Train LSTM Model
 Enter the and set flag TRAIN_MODEL = true

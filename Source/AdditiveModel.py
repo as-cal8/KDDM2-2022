@@ -115,36 +115,35 @@ def additiveModel(df_train, t=None, ignore_plots=False):
 
     if not ignore_plots:
         # drawing figure with subplots, predefined size and resolution
-        f, axes = plt.subplots(8, 1, figsize=(130, 8))
+        f, axes = plt.subplots(7, 1, figsize=(130, 8))
         # setting figure title and adjusting title position and size
         range_start = 5000
         range_end = 12500
         plt.suptitle('Summary of seasonal decomposition', y=0.92)
-        axes[0].plot(sd_3.trend)
+        axes[0].plot(sd_3.trend[5000:20000])
         axes[0].set_title('Trend component')
-        #axes[0].set_ylim([85, 280])
         axes[1].plot(sd_0.seasonal[range_start:range_end])
         axes[1].set_title(str(np.round(topDaySeason[0], 2)) + ' day season')
-        axes[1].set_ylim([-50, 50])
+        #axes[1].set_ylim([-50, 50])
         axes[2].plot(sd_1.seasonal[range_start:range_end])
         axes[2].set_title(str(np.round(topDaySeason[1], 2)) + ' day season')
-        axes[2].set_ylim([-50, 50])
+        #axes[2].set_ylim([-50, 50])
         axes[3].plot(sd_2.seasonal[range_start:range_end])
         axes[3].set_title(str(np.round(topDaySeason[2], 2)) + ' day  season')
-        axes[3].set_ylim([-50, 50])
+        #axes[3].set_ylim([-50, 50])
         axes[4].plot(sd_3.seasonal)
         axes[4].set_title(str(np.round(topDaySeason[3], 2)) + ' day  season')
-        axes[4].set_ylim([-50, 50])
+        #axes[4].set_ylim([-50, 50])
         axes[5].plot(sd_3.resid[range_start:range_end])
         axes[5].set_title('resid')
-        axes[5].set_ylim([-50, 50])
+        #axes[5].set_ylim([-50, 50])
         # plot sum of seasonal decomposition + offset (=mean of trend)
         axes[6].plot(sd_0.seasonal[range_start:range_end] + sd_1.seasonal[range_start:range_end] + sd_2.seasonal[
                                                                                                    range_start:range_end] + sd_3.seasonal[
                                                                                                                             range_start:range_end] + sd_3.trend[
                                                                                                    range_start:range_end])
         axes[6].set_title('sum of seasons')
-        axes[6].plot(pd.Series.to_numpy(df_train["mainGrid"][range_start:range_end]), "r")
+        axes[6].plot(pd.Series.to_numpy(df_train["mainGrid"][range_start:range_end]), "-", label='truth')
         plt.show()
 
     # save residuals/ noise to csv for further use
@@ -218,15 +217,13 @@ def additiveModel(df_train, t=None, ignore_plots=False):
 
     x_plt = x[10000:20000]
 
-    if not ignore_plots:
-        plt.figure()
-        plt.title("Fitted curve for season 3")
-        plt.plot(x_plt, f3x(x_plt, para3), label="fit")
-        plt.plot(x_plt, sd_3.seasonal[10000:20000], label="sd_3")
-        plt.legend()
-        plt.show()
-
-    a = 1
+    # if not ignore_plots:
+    #     plt.figure()
+    #     plt.title("Fitted curve for season 3")
+    #     plt.plot(x_plt, f3x(x_plt, para3), label="fit")
+    #     plt.plot(x_plt, sd_3.seasonal[10000:20000], label="sd_3")
+    #     plt.legend()
+    #     plt.show()
 
     def modelAdditive(t):
         """
