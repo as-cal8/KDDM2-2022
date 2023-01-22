@@ -8,6 +8,8 @@ from pmdarima import auto_arima
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import adfuller
 from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score,mean_squared_error, mean_absolute_error
+
 
 import sys
 import os
@@ -19,6 +21,10 @@ sys.path.insert(0, path)
 pathData = path + str("/Data")
 from DataPreprocessing import dataPreprocesssing
 from AdditiveModel import additiveModel
+import statsmodels.api as sm
+
+sarima = True
+
 
 def arima():
     df= pd.read_csv(pathData+'/noise.csv')
@@ -40,8 +46,14 @@ def arima():
     train=df.iloc[:train_size]
     test=df.iloc[23928:]
 
+    #Note Auto arima fit was executed to find the best variables
+
+    if(sarima):
+        model=sm.tsa.statespace.SARIMAX(train,order=(2, 1, 1),seasonal_order=(1,1,1,12))
+    else:
+        model=ARIMA(train,order=(2,1,1))
+
     # Build and train ARIMA model
-    model=ARIMA(train,order=(2,1,4))
     model=model.fit()
     model.summary()
 
@@ -71,6 +83,16 @@ def arima():
     rmse = np.sqrt(mean_squared_error(df_test['mainGrid'].values, final))
     print(rmse)
     model.save('model_arima.pkl')
+
+    np.sqrt(mean_squared_error(df_test['mainGrid'].values, final))
+    print('Evaluation metric results: ')
+    digits = 3
+    y_test = df_test['mainGrid'].values
+    y_pred = final
+    print(f'MSE is : {np.round(mean_squared_error(y_test, y_pred), digits)}')
+    print(f'MAE is : {np.round(mean_absolute_error(y_test, y_pred), digits)}')
+    print(f'RMSE is : {np.round(np.sqrt(mean_squared_error(y_test, y_pred)), digits)}')
+    print(f'R2 is : {np.round(r2_score(y_test, y_pred), digits)}', end='\n\n')
 
 if __name__ == '__main__':
     arima()

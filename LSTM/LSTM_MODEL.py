@@ -9,7 +9,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.layers import LSTM
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score,mean_squared_error, mean_absolute_error
 from keras.callbacks import EarlyStopping
 from keras.callbacks import ModelCheckpoint
 from keras.utils.vis_utils import plot_model
@@ -156,6 +156,14 @@ def LSTM_Additive_model(predictions):
     plt.plot(final, label = 'Predicted')
     plt.show()
     rmse = np.sqrt(mean_squared_error(df_test['mainGrid'].values, final))
+    print('Evaluation metric results: ')
+    digits = 3
+    y_test = df_test['mainGrid'].values
+    y_pred = final
+    print(f'MSE is : {np.round(mean_squared_error(y_test, y_pred), digits)}')
+    print(f'MAE is : {np.round(mean_absolute_error(y_test, y_pred), digits)}')
+    print(f'RMSE is : {np.round(np.sqrt(mean_squared_error(y_test, y_pred)), digits)}')
+    print(f'R2 is : {np.round(r2_score(y_test, y_pred), digits)}', end='\n\n')
     return rmse
 
 def main():
