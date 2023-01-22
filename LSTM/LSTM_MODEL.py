@@ -1,3 +1,8 @@
+# Sources:
+# https://machinelearningmastery.com/how-to-develop-lstm-models-for-time-series-forecasting/
+# https://www.kaggle.com/code/ritesh7355/develop-lstm-models-for-time-series-forecasting
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd

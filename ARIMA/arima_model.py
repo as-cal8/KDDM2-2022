@@ -1,3 +1,8 @@
+# Sources:
+# https://www.justintodata.com/arima-models-in-python-time-series-prediction/
+# https://analyticsindiamag.com/complete-guide-to-sarimax-in-python-for-time-series-modeling/
+#
+
 import pandas as pd
 import numpy as np
 from matplotlib.pyplot import figure
