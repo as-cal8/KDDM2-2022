@@ -29,12 +29,12 @@ The Requirements to reproduce these results are as follows:
 Correct Functionality and comparable Results cannot be guaranteed on different Versions.
 
 ## To Train LSTM Model
-Preferred to run this code on linux or mac os
+Preferred to run this code on linux or mac os.
 Enter the and set flag TRAIN_MODEL = true
 Choose a Window size by setting the LOOK_BACK variable
 
 ## To Evaluate LSTM Model
-Preferred to run this code on linux or mac os
+Preferred to run this code on linux or mac os.
 Enter the LSTM_Model.py file and set flag TRAIN_MODEL = False
 If testing noise data( from additive model), set the testing_noise = True otherwise set it to False
 
